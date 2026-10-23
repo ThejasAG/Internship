@@ -1,6 +1,6 @@
 """Guard for /apply Step 5b's page-count check.
 
-The 2-page CV and 1-page cover letter limits are the hard rules of
+The 1-page CV and 1-page cover letter limits are the hard rules of
 05-cv-templates.md and 06-cover-letter-templates.md, and two places defer
 their enforcement to `tools/verify_pdf.py --pages`: `verify_layout.py`'s
 docstring ("page count is verify_pdf.py's job, and CI runs it") and Step 5b's
@@ -44,9 +44,9 @@ class ApplyRunsThePageCountCheck(unittest.TestCase):
         invocations = dict(page_count_invocations(self.step_5b))
         self.assertEqual(
             invocations.get("cv/main_<company>_<role>.pdf"),
-            "2",
-            "Step 5b must run verify_pdf.py --pages 2 on the CV - the hard "
-            "2-page limit has no other mechanical check",
+            "1",
+            "Step 5b must run verify_pdf.py --pages 1 on the CV - the hard "
+            "1-page limit (student CV) has no other mechanical check",
         )
         self.assertEqual(
             invocations.get("cover_letters/cover_<company>_<role>.pdf"),
