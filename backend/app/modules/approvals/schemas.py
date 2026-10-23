@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Optional, Dict, Any
+from typing import Optional, Dict, Any, Literal
 from pydantic import BaseModel, Field
 from app.modules.approvals.models import ApprovalStatus
 
@@ -12,7 +12,7 @@ class ApprovalRequestCreate(BaseModel):
 
 
 class ApprovalDecisionRequest(BaseModel):
-    decision: str = Field(..., example="APPROVE", description="'APPROVE' or 'REJECT'")
+    decision: Literal["APPROVE", "REJECT"] = Field(..., example="APPROVE")
     actor_id: str = Field(..., example="user_advisor_1", description="Authenticated actor making the decision")
     decision_reason: Optional[str] = Field(None, description="Optional justification for decision")
     payload_hash_verification: Optional[str] = Field(

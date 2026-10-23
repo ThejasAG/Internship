@@ -58,3 +58,8 @@ Thumbs.db
 .idea/
 *.swp
 *.swo
+
+# TypeScript incremental build cache
+*.tsbuildinfo
+# frontend/lib holds app code (the Python lib/ rule above must not hide it)
+!frontend/lib/

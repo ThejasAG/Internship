@@ -168,7 +168,7 @@ export default function StatusPage() {
           title="Redis & Celery"
           subtitle="Task queue broker & state store"
           icon={<Zap className="w-6 h-6" />}
-          status={healthData ? healthData.redis : null}
+          status={healthData ? healthData.queue : null}
           isLoading={loading}
         />
       </div>

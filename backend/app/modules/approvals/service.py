@@ -68,7 +68,10 @@ async def get_approval_by_id(
 
     # Check for expiration on read
     if approval and approval.status == ApprovalStatus.PENDING and approval.expires_at:
-        if datetime.now(timezone.utc) > approval.expires_at:
+        expires_at = approval.expires_at
+        if expires_at.tzinfo is None:  # SQLite drops tzinfo; stored values are UTC
+            expires_at = expires_at.replace(tzinfo=timezone.utc)
+        if datetime.now(timezone.utc) > expires_at:
             approval.status = ApprovalStatus.EXPIRED
             await session.commit()
             await session.refresh(approval)
@@ -114,7 +117,7 @@ async def process_approval_decision(
 
     new_status = (
         ApprovalStatus.APPROVED
-        if decision_in.decision.upper() == "APPROVE"
+        if decision_in.decision == "APPROVE"
         else ApprovalStatus.REJECTED
     )
 

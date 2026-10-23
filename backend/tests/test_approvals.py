@@ -104,3 +104,20 @@ async def test_approval_hash_mismatch_rejection(async_client: AsyncClient):
     )
     assert bad_res.status_code == 400
     assert "Client payload hash does not match" in bad_res.json()["detail"]
+
+
+@pytest.mark.asyncio
+async def test_unknown_decision_is_rejected_not_recorded(async_client: AsyncClient):
+    create_res = await async_client.post(
+        "/api/v1/approvals",
+        json={"action_type": "application.submit", "payload": {"x": 1}, "requested_by": "student_1"},
+    )
+    approval_id = create_res.json()["id"]
+
+    # "approved" used to be stored silently as REJECTED
+    res = await async_client.post(
+        f"/api/v1/approvals/{approval_id}/decision",
+        json={"decision": "approved", "actor_id": "advisor_1"},
+    )
+    assert res.status_code == 422
+    assert (await async_client.get(f"/api/v1/approvals/{approval_id}")).json()["status"] == "PENDING"

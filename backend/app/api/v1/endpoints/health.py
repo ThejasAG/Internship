@@ -15,7 +15,7 @@ router = APIRouter()
 async def check_health(response: Response) -> HealthStatusResponse:
     health_data = await get_system_health()
     if health_data.status == "unhealthy":
-        response.status_code = status.HTTP(503)
+        response.status_code = status.HTTP_503_SERVICE_UNAVAILABLE
     else:
         response.status_code = status.HTTP_200_OK
     return health_data

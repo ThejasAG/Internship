@@ -78,7 +78,7 @@ def test_test_automation_task_execution_success():
 
     with patch("app.worker.tasks.update_job_status_sync"), \
          patch("app.worker.tasks.record_audit_sync"):
-        result = test_automation_task(
+        result = test_automation_task._orig_run.__func__(
             mock_self,
             payload={"test": "payload"},
             simulate_transient_failure=False,
@@ -98,7 +98,7 @@ def test_test_automation_task_transient_retry():
     with patch("app.worker.tasks.update_job_status_sync"), \
          patch("app.worker.tasks.record_audit_sync"):
         with pytest.raises(TransientTaskError):
-            test_automation_task(
+            test_automation_task._orig_run.__func__(
                 mock_self,
                 payload={"test": "retry"},
                 simulate_transient_failure=True,
@@ -109,7 +109,7 @@ def test_test_automation_task_transient_retry():
     mock_self.request.retries = 1
     with patch("app.worker.tasks.update_job_status_sync"), \
          patch("app.worker.tasks.record_audit_sync"):
-        result = test_automation_task(
+        result = test_automation_task._orig_run.__func__(
             mock_self,
             payload={"test": "retry"},
             simulate_transient_failure=True,
@@ -130,6 +130,6 @@ def test_scheduled_heartbeat_task_registration_and_run():
     mock_self = MagicMock()
     mock_self.request.id = str(uuid.uuid4())
     with patch("app.worker.tasks._get_sync_session", return_value=None):
-        result = scheduled_heartbeat_task(mock_self)
+        result = scheduled_heartbeat_task.run.__func__(mock_self)
         assert result["heartbeat"] == "healthy"
         assert "timestamp" in result
